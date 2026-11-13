@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -38,18 +38,29 @@ const columns = [
       { href: "/grievance", label: "Grievance" },
     ],
   },
+  {
+    title: "Top Tools",
+    links: [
+      { href: "/calculators", label: "Weight Calculators" },
+      { href: "/bill-maker", label: "Bill Maker (GST)" },
+      { href: "/search", label: "Search" },
+      { href: "/community/questions", label: "Trade Q&A" },
+      { href: "/community/polls", label: "Market Polls" },
+      { href: "/login", label: "Login / Dashboard" },
+    ],
+  },
 ];
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
 
-return (
-    <footer className="relative bg-steel-navy text-white overflow-hidden">
+  return (
+    <footer className="bg-[#0B1B2B] text-white overflow-hidden">
       <div className="footer-grad-line" aria-hidden />
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-steel-blue/20 blur-[120px] pointer-events-none" aria-hidden />
 
-<div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-14">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-10">
           <div className="lg:col-span-2">
             <Logo3D variant="molten" />
@@ -58,7 +69,7 @@ return (
               Built for Burrabazar, Kolkata and Eastern India steel trade.
             </p>
 
-<form
+            <form
               onSubmit={(e) => { e.preventDefault(); if (email.trim()) setDone(true); }}
               className="mt-5 flex max-w-sm"
             >
@@ -76,7 +87,7 @@ return (
             </form>
             {done && <p className="mt-2 text-xs text-emerald-400">Shukriya! Aap rate updates ki list mein add ho gaye.</p>}
 
-<div className="mt-6 flex items-center gap-3">
+            <div className="mt-6 flex items-center gap-3">
               <Link href="/contact" aria-label="X (Twitter)" className="w-9 h-9 grid place-items-center rounded-lg bg-white/10 hover:bg-steel-blue transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.2h3.7l-8.1 9.2L24 22.8h-7.5l-5.9-7.7-6.7 7.7H.2l8.7-9.9L0 1.2h7.7l5.3 7 6-7zm-1.3 19.4h2.1L6.6 3.3H4.4l13.2 17.3z" /></svg>
               </Link>
@@ -89,7 +100,7 @@ return (
             </div>
           </div>
 
-<div>
+          <div>
             <p className="text-sm font-semibold text-slate-200 mb-4">Top Products</p>
             <ul className="space-y-2.5">
               {catalog.slice(0, 6).map((c) => (
@@ -100,7 +111,7 @@ return (
             </ul>
           </div>
 
-{columns.map((col) => (
+          {columns.map((col) => (
             <div key={col.title}>
               <p className="text-sm font-semibold text-slate-200 mb-4">{col.title}</p>
               <ul className="space-y-2.5">
@@ -114,7 +125,7 @@ return (
           ))}
         </div>
 
-<div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs text-slate-500">
+        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs text-slate-500">
           <p>Rates shown on Steelsetu are indicative market references, not firm offers. Confirm final rates directly with suppliers.</p>
           <div className="flex items-center gap-4">
             <p>© {new Date().getFullYear()} Steelsetu. All rights reserved.</p>
