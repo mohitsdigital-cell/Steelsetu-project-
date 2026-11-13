@@ -8,7 +8,8 @@ const links = [
   { href: "/dashboard/documents/sale_order", label: "📋 Sale Orders" },
   { href: "/dashboard/documents/tax_invoice", label: "🧾 Invoices" },
   { href: "/dashboard/documents/purchase_order", label: "📦 Purchase Orders" },
-  { href: "/dashboard/inventory", label: "🧮 Inventory",`n  { href: "/dashboard/rfq", label: "📥 RFQ Inbox" } },
+  { href: "/dashboard/inventory", label: "🧮 Inventory" },
+  { href: "/dashboard/rfq", label: "📥 RFQ Inbox" },
 ];
 
 export default function DashboardNav() {
@@ -26,4 +27,3 @@ export default function DashboardNav() {
     </nav>
   );
 }
-
