@@ -4,6 +4,11 @@ const links = [
   { href: "/dashboard", label: "📊 Dashboard" },
   { href: "/dashboard/customers", label: "👥 Customers" },
   { href: "/dashboard/suppliers", label: "🏭 Suppliers" },
+  { href: "/dashboard/documents/quotation", label: "📄 Quotations" },
+  { href: "/dashboard/documents/sale_order", label: "📋 Sale Orders" },
+  { href: "/dashboard/documents/tax_invoice", label: "🧾 Invoices" },
+  { href: "/dashboard/documents/purchase_order", label: "📦 Purchase Orders" },
+  { href: "/dashboard/inventory", label: "🧮 Inventory" },
 ];
 
 export default function DashboardNav() {
