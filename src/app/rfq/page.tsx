@@ -1,99 +1,94 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { matchProducts, Requirement } from "@/lib/matching";
 
-export default function RfqPage() {
-  const [product, setProduct] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [details, setDetails] = useState("");
-  const [ref, setRef] = useState("");
+export default function RFQPage() {
+  const [form, setForm] = useState<Requirement>({
+    productType: "", grade: "", thickness: "", width: "",
+    quantity: "", city: "", budget: "", deliveryDate: "",
+  });
+  const [contact, setContact] = useState({ name: "", phone: "" });
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
 
-const submit = (e: React.FormEvent) => {
+const result = useMemo(() => {
+    if (form.productType.trim().length < 3) return null;
+    return matchProducts(form);
+  }, [form]);
+
+async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const d = new Date();
-    const stamp = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
-    const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-    setRef(`RFQ-${stamp}-${rand}`);
-  };
+    if (!form.productType.trim() || !contact.name.trim() || contact.phone.trim().length < 10) {
+      setMsg("Product type, naam aur 10-digit phone zaroori hain");
+      return;
+    }
+    setBusy(true); setMsg("");
+    const res = await fetch("/api/rfq", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contact_name: contact.name.trim(),
+        contact_phone: contact.phone.trim(),
+        requirement: form,
+        matched_slugs: (result?.matched || []).map((m) => m.slug),
+      }),
+    });
+    setBusy(false);
+    if (!res.ok) { setMsg("Submit nahi hua — thodi der baad try kijiye"); return; }
+    setMsg("RFQ submit ho gayi ✅ Steelsetu team jaldi contact karegi.");
+    setForm({ productType: "", grade: "", thickness: "", width: "", quantity: "", city: "", budget: "", deliveryDate: "" });
+    setContact({ name: "", phone: "" });
+  }
+
+const inputCls = "border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-steel-blue";
 
 return (
-    <div>
-      <section className="bg-steel-navy text-white grain relative overflow-hidden">
-        <div className="absolute -top-20 right-0 w-[350px] h-[350px] rounded-full bg-steel-blue/25 blur-[110px]" aria-hidden />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Post a Requirement</h1>
-          <p className="mt-4 text-slate-300 max-w-2xl">
-            One structured RFQ instead of repeating yourself to every supplier.
-          </p>
-        </div>
-      </section>
+    <main className="min-h-screen bg-[#F5F7FB]">
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <h1 className="text-3xl font-extrabold text-[#0B1B2B]">Smart Product Matching</h1>
+        <p className="mt-2 text-sm text-slate-500">Apni requirement batayein — hum turant matching products aur brands dikhate hain, aur RFQ save karte hain.</p>
 
-<section className="max-w-2xl mx-auto px-4 sm:px-6 py-14">
-        {ref ? (
-          <div className="bg-white border border-gray-200 rounded-3xl p-10 text-center shadow-xl shadow-steel-blue/10">
-            <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 grid place-items-center">
-              <span className="text-emerald-600 text-3xl">✓</span>
-            </div>
-            <h2 className="mt-6 text-xl font-bold text-steel-navy">Requirement reference created</h2>
-            <p className="mt-4 text-sm text-steel-charcoal/70">Save this reference number:</p>
-            <p className="mt-2 text-2xl font-bold text-steel-blue tracking-wider">{ref}</p>
-            <p className="mt-6 text-xs text-steel-grey leading-relaxed">
-              This is the Phase 1 front-end demo. Supplier matching and WhatsApp-based flow
-              arrive with the CRM integration — no data leaves your browser right now.
-            </p>
-            <button
-              onClick={() => setRef("")}
-              className="mt-8 text-sm font-semibold text-steel-blue hover:underline"
-            >
-              Post another requirement
-            </button>
+<form onSubmit={submit} className="mt-6 bg-white rounded-2xl shadow p-6">
+          <h2 className="font-bold text-[#0B1B2B]">Aapki requirement</h2>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <input className={inputCls + " sm:col-span-2"} placeholder="Product type * (e.g. TMT bars, GI sheets)" value={form.productType} onChange={(e) => setForm({ ...form, productType: e.target.value })} />
+            <input className={inputCls} placeholder="Grade (e.g. Fe500D)" value={form.grade} onChange={(e) => setForm({ ...form, grade: e.target.value })} />
+            <input className={inputCls} placeholder="Thickness / size" value={form.thickness} onChange={(e) => setForm({ ...form, thickness: e.target.value })} />
+            <input className={inputCls} placeholder="Width (if applicable)" value={form.width} onChange={(e) => setForm({ ...form, width: e.target.value })} />
+            <input className={inputCls} placeholder="Quantity (e.g. 50 MT)" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+            <input className={inputCls} placeholder="City / delivery location" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+            <input className={inputCls} placeholder="Budget (approx Rs)" value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} />
+            <input className={inputCls} type="date" value={form.deliveryDate} onChange={(e) => setForm({ ...form, deliveryDate: e.target.value })} />
+            <input className={inputCls} placeholder="Aapka naam *" value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} />
+            <input className={inputCls} placeholder="Phone (10 digits) *" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} />
           </div>
-        ) : (
-          <form onSubmit={submit} className="bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-xl shadow-steel-blue/10 space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-steel-navy mb-2">Product required *</label>
-              <input
-                required
-                value={product}
-                onChange={(e) => setProduct(e.target.value)}
-                placeholder="e.g. Fe500D TMT Bars 12mm"
-                className="w-full border border-gray-300 focus:border-steel-blue focus:ring-2 focus:ring-steel-blue/20 rounded-xl px-4 py-3 outline-none transition-all"
-              />
+
+{result && result.matched.length > 0 && (
+            <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Live matching ({result.matched.length} products)</p>
+              <div className="mt-2 space-y-1.5">
+                {result.matched.map((m) => (
+                  <Link key={m.slug} href={"/products/" + m.slug} className="block text-sm font-semibold text-steel-navy hover:text-steel-blue">
+                    • {m.name} <span className="text-xs text-slate-400">— {m.short}</span>
+                  </Link>
+                ))}
+              </div>
+              {result.relatedBrands.length > 0 && (
+                <p className="mt-3 text-xs text-slate-500">
+                  Related brands: {result.relatedBrands.map((b) => b.name).join(", ")}
+                </p>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-steel-navy mb-2">Quantity *</label>
-              <input
-                required
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                placeholder="e.g. 5 tonnes"
-                className="w-full border border-gray-300 focus:border-steel-blue focus:ring-2 focus:ring-steel-blue/20 rounded-xl px-4 py-3 outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-steel-navy mb-2">
-                Specifications / delivery details
-              </label>
-              <textarea
-                rows={4}
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
-                placeholder="Grade, brand preference, delivery location, timeline..."
-                className="w-full border border-gray-300 focus:border-steel-blue focus:ring-2 focus:ring-steel-blue/20 rounded-xl px-4 py-3 outline-none transition-all resize-none"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-steel-blue hover:bg-steel-blue/85 text-white font-semibold py-4 rounded-xl glow transition-all hover:scale-[1.01]"
-            >
-              Create RFQ Reference →
-            </button>
-            <p className="text-[11px] text-steel-grey text-center">
-              Phase 1 demo — runs entirely in your browser.
-            </p>
-          </form>
-        )}
-      </section>
-    </div>
+          )}
+
+<button disabled={busy} className="mt-4 bg-steel-navy hover:bg-steel-blue disabled:opacity-50 text-white text-sm font-bold px-6 py-2.5 rounded-xl">
+            {busy ? "Submitting..." : "Submit RFQ"}
+          </button>
+          {msg && <p className="mt-3 text-sm font-semibold text-steel-blue">{msg}</p>}
+        </form>
+      </div>
+    </main>
   );
 }
