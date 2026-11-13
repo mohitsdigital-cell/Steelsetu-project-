@@ -1,8 +1,11 @@
-﻿import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
+import { catalog } from "@/lib/catalog";
+import { brands } from "@/lib/brands";
+import { articles } from "@/lib/articles";
 
 const BASE = "https://steelsetu.com";
 
-const ROUTES: { path: string; freq: "daily" | "weekly" | "monthly" | "yearly" | "yearly"; pri: number }[] = [
+const ROUTES: { path: string; freq: "daily" | "weekly" | "monthly" | "yearly"; pri: number }[] = [
   { path: "", freq: "daily", pri: 1.0 },
   { path: "/products", freq: "weekly", pri: 0.9 },
   { path: "/brands", freq: "weekly", pri: 0.9 },
@@ -30,12 +33,40 @@ const ROUTES: { path: string; freq: "daily" | "weekly" | "monthly" | "yearly" | 
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  return ROUTES.map((r) => ({
+  const staticEntries = ROUTES.map((r) => ({
     url: BASE + r.path,
     lastModified: now,
     changeFrequency: r.freq,
     priority: r.pri,
   }));
+
+  const productEntries = catalog.map((p) => ({
+    url: `${BASE}/products/${p.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  const categoryEntries = catalog.map((c) => ({
+    url: `${BASE}/categories/${c.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const brandEntries = brands.map((b) => ({
+    url: `${BASE}/brands/${b.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const articleEntries = articles.map((a) => ({
+    url: `${BASE}/knowledge/${a.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...productEntries, ...categoryEntries, ...brandEntries, ...articleEntries];
 }
-
-
