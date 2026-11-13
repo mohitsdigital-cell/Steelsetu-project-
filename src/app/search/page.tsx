@@ -38,7 +38,7 @@ return (
               <div className="mt-6 bg-white rounded-2xl shadow p-8 text-center">
                 <p className="text-4xl">🔍</p>
                 <p className="mt-3 text-sm text-slate-500">
-                  Kuch nahi mila. Product ka naam try kijiye — jaise "TMT", "sheet", "coil", ya brand naam.
+                  Kuch nahi mila. Product ka naam try kijiye — jaise “TMT”, “sheet”, “coil”, ya brand naam.
                 </p>
                 <Link href="/products" className="inline-block mt-5 bg-steel-navy hover:bg-steel-blue text-white text-sm font-bold px-6 py-2.5 rounded-xl">
                   Browse All Products
@@ -110,5 +110,6 @@ return (
     </main>
   );
 }
+
 
 
