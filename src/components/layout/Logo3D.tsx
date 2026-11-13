@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 type LogoVariant = "beam" | "plates" | "molten";
 
-export default function Logo3D({ variant = "beam" }: { variant?: LogoVariant }) {
+export default function Logo3D({ variant = "beam", dark = false }: { variant?: LogoVariant; dark?: boolean }) {
   return (
     <span className="flex items-center gap-2.5 group">
       {variant === "beam" && (
@@ -26,7 +26,7 @@ export default function Logo3D({ variant = "beam" }: { variant?: LogoVariant }) 
           <span className="logo3d-face f-right" />
         </span>
       )}
-      <span className="logo3d-word text-xl text-white">
+      <span className={`logo3d-word text-xl ${dark ? "text-steel-navy" : "text-white"}`}>
         Steel<span className="logo3d-setu">setu</span>
       </span>
     </span>
