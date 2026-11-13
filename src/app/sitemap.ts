@@ -2,7 +2,7 @@
 
 const BASE = "https://steelsetu.com";
 
-const ROUTES: { path: string; freq: "daily" | "weekly" | "monthly" | "yearly"; pri: number }[] = [
+const ROUTES: { path: string; freq: "daily" | "weekly" | "monthly" | "yearly" | "yearly"; pri: number }[] = [
   { path: "", freq: "daily", pri: 1.0 },
   { path: "/products", freq: "weekly", pri: 0.9 },
   { path: "/brands", freq: "weekly", pri: 0.9 },
@@ -37,4 +37,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: r.pri,
   }));
 }
+
 
