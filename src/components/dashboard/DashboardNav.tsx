@@ -10,6 +10,8 @@ const links = [
   { href: "/dashboard/documents/purchase_order", label: "📦 Purchase Orders" },
   { href: "/dashboard/inventory", label: "🧮 Inventory" },
   { href: "/dashboard/rfq", label: "📥 RFQ Inbox" },
+  { href: "/dashboard/ledger", label: "📗 Ledger" },
+  { href: "/dashboard/settings", label: "⚙️ Settings" },
 ];
 
 export default function DashboardNav() {
