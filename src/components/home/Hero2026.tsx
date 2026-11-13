@@ -1,23 +1,34 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const CATS = [
-  { label: "TMT Bars & Rebar", slug: "/products" },
-  { label: "MS Sheets & Plates", slug: "/products" },
-  { label: "GI / PPGI / PPGL Coils", slug: "/products" },
-  { label: "Corrugated Roofing Sheets", slug: "/products" },
-  { label: "Structural Steel (Beams)", slug: "/products" },
-  { label: "Pipes & Tubes", slug: "/products" },
-  { label: "Wires & Binding Wire", slug: "/products" },
-  { label: "Fasteners & Screws", slug: "/products" },
-  { label: "PUF / Insulated Panels", slug: "/products" },
-  { label: "Polycarbonate & FRP", slug: "/products" },
-  { label: "Scrap & Recycled Steel", slug: "/products" },
+  { label: "TMT Bars & Rebar", slug: "/products/tmt-bars" },
+  { label: "MS Sheets & Plates", slug: "/products/ms-sheets-plates" },
+  { label: "GI / PPGI / PPGL Coils", slug: "/products/gi-coils" },
+  { label: "Corrugated Roofing Sheets", slug: "/products/gi-corrugated-sheets" },
+  { label: "Structural Sections", slug: "/products/structural-sections" },
+  { label: "Pipes & Tubes", slug: "/products/pipes-tubes" },
+  { label: "Round Bars & Wire Rods", slug: "/products/round-bars" },
+  { label: "Roofing Screws & Fasteners", slug: "/products/roofing-screws" },
+  { label: "PUF / Insulated Panels", slug: "/products/puf-panels" },
+  { label: "Polycarbonate & FRP", slug: "/products/polycarbonate-sheets" },
+  { label: "Hollow Sections (SHS/RHS)", slug: "/products/hollow-sections" },
   { label: "All Categories →", slug: "/products" },
 ];
 
 export default function Hero2026() {
+  const [q, setQ] = useState("");
+  const router = useRouter();
+
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const query = q.trim();
+    if (query) router.push("/search?q=" + encodeURIComponent(query));
+  }
+
   return (
     <section className="bg-[#F5F7FB] pt-4 pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -45,20 +56,26 @@ export default function Hero2026() {
               <p className="mt-3 text-sm sm:text-base text-slate-200 max-w-md">
                 Calculators, Bill Maker, indicative rates aur RFQ — sab kuch ek jagah. Mobile-first.
               </p>
-              <div className="mt-6 flex flex-col sm:flex-row gap-2 max-w-lg">
+              <form onSubmit={submitSearch} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-lg">
                 <input
                   type="text"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
                   placeholder="Search: TMT Fe550D, PPGL 0.50mm..."
                   className="flex-1 px-4 py-3.5 rounded-xl outline-none text-[#0B1B2B] font-medium bg-white"
                 />
-                <Link href="/products" className="ss-orange-cta px-6 py-3.5 text-center">
+                <button type="submit" className="ss-orange-cta px-6 py-3.5 text-center">
                   Search
-                </Link>
-              </div>
+                </button>
+              </form>
               <div className="mt-5 flex flex-wrap gap-2">
-                {["TMT Bars", "Roofing Sheets", "GI Coils"].map((t) => (
-                  <Link key={t} href="/products" className="text-xs font-semibold bg-white/10 border border-white/25 rounded-full px-3 py-1.5 hover:bg-white/20 transition-colors">
-                    {t}
+                {[
+                  { t: "TMT Bars", s: "/products/tmt-bars" },
+                  { t: "Roofing Sheets", s: "/products/roofing-sheets" },
+                  { t: "GI Coils", s: "/products/gi-coils" },
+                ].map((x) => (
+                  <Link key={x.t} href={x.s} className="text-xs font-semibold bg-white/10 border border-white/25 rounded-full px-3 py-1.5 hover:bg-white/20 transition-colors">
+                    {x.t}
                   </Link>
                 ))}
               </div>
