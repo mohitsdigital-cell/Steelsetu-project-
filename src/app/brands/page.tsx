@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { brands } from "@/lib/brands";
+import BrandLogo from "@/components/brands/BrandLogo";
 
 export const metadata = { title: "Brands — Steelsetu" };
 
@@ -20,15 +21,20 @@ export default function BrandsPage() {
         </div>
       </section>
 
-<section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {brands.map((b) => (
             <Link key={b.slug} href={"/brands/" + b.slug} className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="text-lg font-bold text-steel-navy group-hover:text-steel-blue">{b.name}</h2>
-                <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-0.5">Info listing</span>
+              <div className="flex items-start gap-4">
+                <BrandLogo slug={b.slug} name={b.name} />
+                <div className="flex items-start justify-between gap-3 flex-1 min-w-0">
+                  <div>
+                    <h2 className="text-lg font-bold text-steel-navy group-hover:text-steel-blue">{b.name}</h2>
+                    <p className="mt-1 text-xs text-slate-400">{b.hq}</p>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-0.5 shrink-0">Info listing</span>
+                </div>
               </div>
-              <p className="mt-1 text-xs text-slate-400">{b.hq}</p>
               <p className="mt-3 text-sm text-steel-charcoal/80 leading-relaxed">{b.about}</p>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {b.groups.slice(0, 3).map((g) => (
@@ -40,13 +46,13 @@ export default function BrandsPage() {
           ))}
         </div>
 
-<div className="mt-10 bg-white border border-gray-200 rounded-3xl p-8">
+        <div className="mt-10 bg-white border border-gray-200 rounded-3xl p-8">
           <h2 className="text-xl font-bold text-steel-navy">How brand pages work on Steelsetu</h2>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               ["Evidence first", "A verified badge appears only after the brand-supplier relationship is documented and reviewed."],
               ["Correct mapping", "A seller listing a brand never implies the brand manufactures or authorises them."],
-              ["Trademark respect", "All trademarks belong to their owners. Steelsetu is an independent platform."],
+              ["Trademark respect", "All trademarks belong to their owners. Steelsetu is an independent platform. Logo tiles shown are stylised identifiers, not official trademarks."],
             ].map(([title, text]) => (
               <div key={title} className="border border-gray-200 rounded-2xl p-5">
                 <h3 className="text-sm font-bold text-steel-navy">{title}</h3>
