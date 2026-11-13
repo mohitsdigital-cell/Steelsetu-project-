@@ -2,6 +2,7 @@
 import { catalog } from "@/lib/catalog";
 import Hero2026 from "@/components/home/Hero2026";
 import BentoFeatures from "@/components/home/BentoFeatures";
+import FeaturedCategories from "@/components/home/FeaturedCategories";
 
 const steps = [
   { no: "01", title: "Discover", text: "Find verified suppliers by product, location and category with precise verification labels." },
@@ -17,6 +18,7 @@ export default function HomePage() {
       <Hero2026 />
 
       <BentoFeatures />
+      <FeaturedCategories />
 
 {/* BENTO — Why Steelsetu */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
@@ -128,4 +130,5 @@ export default function HomePage() {
     </div>
   );
 }
+
 

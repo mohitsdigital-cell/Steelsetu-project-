@@ -178,3 +178,42 @@
 .ss-svc { border-radius: .9rem; border: 1px solid #E5EAF2; background: #fff; padding: .9rem; text-align: center; transition: transform .2s, box-shadow .2s; }
 .ss-svc:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -12px rgba(11,27,43,.22); }
 .ss-badge { font-size: .68rem; font-weight: 700; padding: .15rem .5rem; border-radius: .4rem; background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+/* ============ 3D LOGO + TRENDING UI ============ */
+.logo3d-stage { position:relative; width:38px; height:38px; flex:none; transform-style:preserve-3d; perspective:320px; display:grid; place-items:center; }
+.logo3d-spin { animation: logo3d-rotate 7s linear infinite; }
+@keyframes logo3d-rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+.logo3d-beam-top, .logo3d-beam-bottom { position:absolute; left:3px; right:3px; height:8px; border-radius:3px; transform:translateZ(6px); }
+.logo3d-beam-top { top:3px; background:linear-gradient(135deg,#f1f5fb,#93a4b8 45%,#dfe7f0); box-shadow:0 2px 4px rgba(11,27,43,.35); }
+.logo3d-beam-bottom { bottom:3px; background:linear-gradient(135deg,#33475f,#0B1B2B); box-shadow:0 2px 4px rgba(11,27,43,.35); }
+.logo3d-beam-web { position:absolute; top:11px; bottom:11px; left:15px; right:15px; border-radius:2px; background:linear-gradient(180deg,#FF6A00,#ff8f3f); box-shadow:0 0 12px rgba(255,106,0,.6); transform:translateZ(8px); }
+
+.logo3d-plate { position:absolute; width:28px; height:28px; border-radius:8px; transform:rotateX(55deg) rotateZ(45deg); animation:logo3d-float 3s ease-in-out infinite; }
+.logo3d-plate.p1 { background:linear-gradient(135deg,#f2f6fb,#a9bacd); border:1px solid #93a4b8; box-shadow:0 8px 16px rgba(11,27,43,.35), inset 0 1px 0 #fff; }
+.logo3d-plate.p2 { background:linear-gradient(135deg,#FF6A00,#c24e00); border:1px solid #e05e00; box-shadow:0 8px 16px rgba(255,106,0,.4); animation-delay:.4s; }
+.logo3d-plate.p3 { background:linear-gradient(135deg,#33475f,#0B1B2B); border:1px solid #33475f; box-shadow:0 8px 16px rgba(11,27,43,.45); animation-delay:.8s; }
+@keyframes logo3d-float { 0%,100% { transform:rotateX(55deg) rotateZ(45deg) translateZ(0px); } 50% { transform:rotateX(55deg) rotateZ(45deg) translateZ(10px); } }
+
+.logo3d-face { position:absolute; left:50%; top:50%; width:24px; height:24px; margin:-12px 0 0 -12px; border-radius:4px; }
+.logo3d-face.f-front { transform:translateZ(12px); background:linear-gradient(135deg,#f3f7fc,#8d9fb4); }
+.logo3d-face.f-top { transform:rotateX(90deg) translateZ(12px); background:linear-gradient(135deg,#ffe0c2,#FF6A00); }
+.logo3d-face.f-right { transform:rotateY(90deg) translateZ(12px); background:linear-gradient(135deg,#33475f,#0B1B2B); }
+.logo3d-glow { animation: logo3d-rotate 8s linear infinite, logo3d-pulse 2.5s ease-in-out infinite; }
+@keyframes logo3d-pulse { 0%,100% { filter:drop-shadow(0 0 6px rgba(255,106,0,.35)); } 50% { filter:drop-shadow(0 0 14px rgba(255,106,0,.7)); } }
+
+.logo3d-word { font-weight:800; letter-spacing:-.02em; }
+.logo3d-setu { color:#FF6A00; text-shadow:0 0 18px rgba(255,106,0,.45); }
+
+.ticker-track { display:inline-flex; gap:2.5rem; padding-left:2.5rem; white-space:nowrap; animation:ticker-move 30s linear infinite; will-change:transform; }
+@keyframes ticker-move { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+.featured-card { position:relative; display:block; background:#fff; border-radius:1rem; padding:1.25rem; border:1px solid #e5e7eb; transition:all .25s; overflow:hidden; }
+.featured-card:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(11,27,43,.12); border-color:#FF6A00; }
+.featured-card::after { content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:linear-gradient(90deg,#FF6A00,#6366f1); transform:scaleX(0); transform-origin:left; transition:transform .25s; }
+.featured-card:hover::after { transform:scaleX(1); }
+.trending-badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:linear-gradient(90deg,#FF6A00,#ff3d00); padding:.35rem .75rem; border-radius:999px; box-shadow:0 4px 14px rgba(255,106,0,.35); }
+
+.footer-grad-line { height:2px; background:linear-gradient(90deg,transparent,#FF6A00,#6366f1,#FF6A00,transparent); background-size:200% 100%; animation:grad-move 5s linear infinite; }
+@keyframes grad-move { from { background-position:0% 0; } to { background-position:200% 0; } }
+
+.mega-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#FF6A00; margin-bottom:.75rem; }
