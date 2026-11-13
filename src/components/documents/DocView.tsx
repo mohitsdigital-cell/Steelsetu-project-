@@ -9,7 +9,7 @@ export default function DocView({ docType, id }: { docType: DocType; id: string 
   const meta = DOC_META[docType];
   const [doc, setDoc] = useState<any>(null);
   const [items, setItems] = useState<any[]>([]);
-  const [orgName, setOrgName] = useState("");
+  const [org, setOrg] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
 useEffect(() => {
@@ -18,9 +18,9 @@ useEffect(() => {
       setDoc(d);
       const { data: it } = await supabase.from("document_items").select("*").eq("document_id", id).order("sort_no");
       setItems(it || []);
-      if (d?.customer_id || d?.supplier_id) {
-        const { data: mm } = await supabase.from("org_members").select("org_id, orgs(name)").limit(1).maybeSingle();
-        setOrgName((mm as any)?.orgs?.name || "");
+      if (d?.org_id) {
+        const { data: o } = await supabase.from("orgs").select("*").eq("id", d.org_id).single();
+        setOrg(o || null);
       }
       setLoading(false);
     })();
@@ -35,6 +35,8 @@ const fmt = (n: number) => "Rs " + n.toLocaleString("en-IN");
 
 if (loading) return <main className="min-h-screen grid place-items-center text-slate-400">Load ho raha hai...</main>;
   if (!doc) return <main className="min-h-screen grid place-items-center text-slate-400">Document nahi mila.</main>;
+
+const orgAddr = [org?.address, org?.city, org?.state, org?.pincode].filter(Boolean).join(", ");
 
 return (
     <main className="min-h-screen bg-[#F5F7FB]">
@@ -51,14 +53,18 @@ return (
 <div className="mt-4 bg-white rounded-2xl shadow p-8">
           <div className="flex items-start justify-between flex-wrap gap-3 border-b border-slate-100 pb-5">
             <div>
-              <h1 className="text-xl font-extrabold text-[#0B1B2B]">{orgName || "Steelsetu"}</h1>
-              <p className="text-xs text-slate-400 mt-1">Merchant Operating System</p>
+              <h1 className="text-xl font-extrabold text-[#0B1B2B]">{org?.name || "Steelsetu"}</h1>
+              {orgAddr && <p className="text-xs text-slate-500 mt-1 max-w-xs">{orgAddr}</p>}
+              {org?.gstin && <p className="text-xs text-slate-500">GSTIN: <b>{org.gstin}</b></p>}
+              {(org?.phone || org?.email) && (
+                <p className="text-xs text-slate-400">{[org.phone, org.email].filter(Boolean).join(" · ")}</p>
+              )}
             </div>
             <div className="text-right">
               <h2 className="text-lg font-bold text-steel-navy">{meta.label.toUpperCase()}</h2>
               <p className="text-sm font-bold text-slate-500">{doc.doc_no}</p>
               <p className="text-xs text-slate-400">Date: {doc.doc_date}{doc.valid_until ? " · Valid till: " + doc.valid_until : ""}</p>
-              <span className="inline-block mt-1 text-[10px] font-bold uppercase rounded-full px-2 py-1 bg-slate-100 text-slate-600">{doc.status}</span>
+              <span className="inline-block mt-1 text-[10px] font-bold uppercase rounded-full px-2 py-1 bg-slate-100 text-slate-600 print:bg-white print:border print:border-slate-300">{doc.status}</span>
             </div>
           </div>
 
@@ -91,6 +97,12 @@ return (
             {Number(doc.sgst) > 0 && <div className="flex justify-between"><span className="text-slate-400">SGST 9%</span><b>{fmt(Number(doc.sgst))}</b></div>}
             <div className="flex justify-between text-base border-t border-slate-100 pt-2"><span className="text-slate-400">Total</span><b className="text-[#0B1B2B]">{fmt(Number(doc.total))}</b></div>
           </div>
+
+{(org?.bank_name || org?.bank_account) && (
+            <div className="mt-5 border-t border-slate-100 pt-3 text-xs text-slate-500">
+              <b className="text-slate-600">Bank:</b> {org.bank_name || "—"} · A/c: {org.bank_account || "—"} · IFSC: {org.bank_ifsc || "—"}
+            </div>
+          )}
 
 {doc.notes && <p className="mt-5 text-xs text-slate-400">Notes: {doc.notes}</p>}
           <p className="mt-6 text-[10px] text-slate-400 text-center">This is a computer generated document — Steelsetu</p>

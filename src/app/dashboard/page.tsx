@@ -126,10 +126,10 @@ return (
         </div>
 
 <div className="mt-8 bg-white rounded-2xl shadow p-6">
-          <h2 className="font-bold text-[#0B1B2B]">Aage ka roadmap (E4–E7)</h2>
+          <h2 className="font-bold text-[#0B1B2B]">Sabse naye modules</h2>
           <ul className="mt-3 text-sm text-slate-500 list-disc pl-5 space-y-1">
-            <li>E4–E5: Sales &amp; Purchase document chains, steel-specific inventory</li>
-            <li>E6–E7: Accounting khata &amp; multi-company billing engine</li>
+            <li>E4–E7 poore live: Quotation/Order/Challan/Invoice/PO, Inventory, Ledger, Company Settings</li>
+            <li>RFQ Inbox se buyer requirements dekhein, Settings se billing profile bharein</li>
           </ul>
         </div>
       </div>
