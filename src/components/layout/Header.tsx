@@ -1,11 +1,13 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Logo3D from "./Logo3D";
+import BrandLogo from "@/components/brands/BrandLogo";
 import { catalog } from "@/lib/catalog";
-import { accessories, brands } from "@/lib/trade-extras";
+import { accessories } from "@/lib/trade-extras";
+import { brands } from "@/lib/brands";
 
 const navLinks = [
   { href: "/suppliers", label: "Suppliers" },
@@ -29,13 +31,13 @@ export default function Header() {
   const [q, setQ] = useState("");
   const router = useRouter();
 
-  function submitSearch(e: React.FormEvent) {
+function submitSearch(e: React.FormEvent) {
     e.preventDefault();
     const query = q.trim();
     if (query) router.push("/search?q=" + encodeURIComponent(query));
   }
 
-  return (
+return (
     <header className="sticky top-0 z-50">
       {/* Utility bar */}
       <div className="bg-steel-navy text-white/80 text-[11px]">
@@ -49,7 +51,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Ticker */}
+{/* Ticker */}
       <div className="bg-gradient-to-r from-steel-blue via-indigo-600 to-steel-blue overflow-hidden" aria-hidden>
         <div className="ticker-track py-1.5 text-[11px] font-semibold text-white/85">
           {[...tickerItems, ...tickerItems].map((t, i) => (
@@ -58,7 +60,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* White main header with central search */}
+{/* White main header with central search */}
       <div className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 gap-4">
@@ -66,7 +68,7 @@ export default function Header() {
               <Logo3D variant="beam" dark />
             </Link>
 
-            {/* Central search — Alibaba style */}
+{/* Central search — Alibaba style */}
             <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-2xl">
               <div className="flex w-full rounded-full border-2 border-steel-navy overflow-hidden bg-white">
                 <input
@@ -85,20 +87,20 @@ export default function Header() {
               </div>
             </form>
 
-            <div className="hidden md:flex items-center gap-3">
+<div className="hidden md:flex items-center gap-3">
               <Link href="/rfq" className="text-sm font-bold text-white bg-gradient-to-r from-[#FF6A00] to-[#ff8f3f] hover:brightness-110 px-5 py-2.5 rounded-full shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.03]">
                 Post Requirement
               </Link>
             </div>
 
-            <button onClick={() => setOpen(!open)} className="md:hidden text-steel-navy p-2 rounded-lg hover:bg-slate-100" aria-label="Menu">
+<button onClick={() => setOpen(!open)} className="md:hidden text-steel-navy p-2 rounded-lg hover:bg-slate-100" aria-label="Menu">
               <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 {open ? <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" /> : <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />}
               </svg>
             </button>
           </div>
 
-          {/* Category row */}
+{/* Category row */}
           <div className="hidden lg:flex items-center gap-1 h-10">
             <div className="relative group">
               <button className="px-3.5 py-2 text-sm font-semibold text-steel-navy flex items-center gap-1 rounded-lg hover:bg-steel-blue/10 transition-colors">
@@ -130,19 +132,23 @@ export default function Header() {
                   </div>
                   <div>
                     <p className="mega-title text-steel-navy">Top Brands</p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2.5">
                       {brands.slice(0, 8).map((b) => (
-                        <li key={b.name}>
-                          <Link href="/brands" className="text-sm text-slate-600 hover:text-steel-blue transition-colors">{b.name}</Link>
+                        <li key={b.slug}>
+                          <Link href={"/brands/" + b.slug} className="flex items-center gap-2 text-sm text-slate-600 hover:text-steel-blue transition-colors">
+                            <BrandLogo slug={b.slug} name={b.name} size="sm" />
+                            {b.name}
+                          </Link>
                         </li>
                       ))}
+                      <li><Link href="/brands" className="text-sm font-bold text-steel-blue hover:text-steel-navy">All brands →</Link></li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
 
-            {navLinks.map((l) => (
+{navLinks.map((l) => (
               <Link key={l.href} href={l.href} className="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-steel-navy hover:bg-steel-blue/10 rounded-lg transition-colors">
                 {l.label}
               </Link>
@@ -150,7 +156,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+{/* Mobile menu */}
         {open && (
           <div className="md:hidden border-t border-slate-200 bg-white">
             <form onSubmit={submitSearch} className="px-4 pt-4">
