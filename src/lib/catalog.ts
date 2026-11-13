@@ -180,4 +180,84 @@ export const catalog: CatalogItem[] = [
       { label: "Check before buying", value: "Outer diameter, wall thickness, class/grade, standard" },
     ],
   },
+  {
+    slug: "hr-coils", name: "Hot Rolled Coils", short: "HR coils for pipes, structures and re-rolling.",
+    description: "Hot rolled coils used as feedstock for pipes, cold rolling and structural re-rolling.",
+    specs: [
+      { label: "Common standard", value: "IS 2062 or equivalent - confirm with supplier" },
+      { label: "Check before buying", value: "Width, thickness, mill edge / slit edge" },
+    ],
+  },
+  {
+    slug: "cr-coils", name: "Cold Rolled Coils", short: "CR coils for panels, furniture and precision work.",
+    description: "Cold rolled coils with better surface finish for fabrication needing tight tolerances.",
+    specs: [
+      { label: "Common uses", value: "Panels, furniture, drums, precision fabrication" },
+      { label: "Check before buying", value: "Thickness, width, skin-pass / annealed condition" },
+    ],
+  },
+  {
+    slug: "mini-coils", name: "Mini / Slit Coils", short: "Narrow slit coils for small fabrication units.",
+    description: "Slit-width coils cut from full-width GI or CR coils for small roll-forming and fabrication units.",
+    specs: [
+      { label: "Common widths", value: "Narrow slit widths - confirm available range" },
+      { label: "Tip", value: "Match coil ID/OD with your decoiling equipment" },
+    ],
+  },
+  {
+    slug: "printed-ppgl-sheets", name: "Printed Colour Coated Sheets", short: "Wood/stone-finish printed profile sheets.",
+    description: "Pre-painted printed profile sheets (wood grain, stone, tile patterns) for premium roofing and cladding.",
+    specs: [
+      { label: "Patterns", value: "Wood grain, stone, tile finishes" },
+      { label: "Check before buying", value: "Print layer durability, coating thickness" },
+    ],
+  },
+  {
+    slug: "chequered-plates", name: "MS Chequered Plates", short: "Anti-slip tread plates for flooring.",
+    description: "Raised-pattern mild steel plates used for industrial flooring, walkways, stair treads and truck bodies.",
+    specs: [
+      { label: "Common sizes", value: "Confirm thickness and pattern with supplier" },
+      { label: "Standard", value: "IS 2062 base - confirm with supplier" },
+    ],
+  },
+  {
+    slug: "ss-sheets", name: "Stainless Steel Sheets", short: "SS 304/316 sheets and plates.",
+    description: "Austenitic stainless steel sheets (304/316 grades) for food, pharma, architectural and corrosion-prone applications.",
+    specs: [
+      { label: "Common grades", value: "SS 304, SS 316 (confirm with supplier)" },
+      { label: "Finishes", value: "2B, BA, matte, hairline, mirror" },
+    ],
+  },
+  {
+    slug: "aluminium-sheets", name: "Aluminium Sheets", short: "Al sheets for cladding, signage and ducting.",
+    description: "Aluminium sheets and coils for facade cladding, signage, insulation and HVAC ducting.",
+    specs: [
+      { label: "Common alloys", value: "Alloy series used for sheets - confirm with supplier" },
+      { label: "Applications", value: "Cladding, signage, AC ducting, insulation" },
+    ],
+  },
+  {
+    slug: "hollow-sections", name: "Square & Rectangular Hollow Sections", short: "SHS/RHS for modern structures.",
+    description: "Square and rectangular hollow sections for fabrication where clean lines and torsional strength matter.",
+    specs: [
+      { label: "Common sizes", value: "Confirm size range with supplier" },
+      { label: "Uses", value: "Railing, truss, furniture, structural frames" },
+    ],
+  },
+  {
+    slug: "ms-flats", name: "MS Flats", short: "Flat bars for fabrication and grills.",
+    description: "Mild steel flat bars used in grills, gates, frames, base plates and general fabrication.",
+    specs: [
+      { label: "Common sizes", value: "Width x thickness combinations - confirm with supplier" },
+      { label: "Weight formula", value: "kg per metre = width(mm) x thickness(mm) / 127 approx (MS)" },
+    ],
+  },
+  {
+    slug: "round-bars", name: "Round Bars & Wire Rods", short: "MS/EN8 rounds and binding wire rods.",
+    description: "Round bars for shafts, fasteners and fabrication; wire rods including binding wire for construction sites.",
+    specs: [
+      { label: "Common types", value: "MS rounds, EN8 rounds, binding wire" },
+      { label: "Check before buying", value: "Diameter, grade, straightness" },
+    ],
+  },
 ];
