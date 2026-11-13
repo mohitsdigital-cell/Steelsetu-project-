@@ -31,7 +31,7 @@ return (
         {query ? (
           <>
             <h1 className="text-2xl font-extrabold text-steel-navy">
-              {total > 0 ? `${total} results for "${query}"` : `No results for "${query}"`}
+              {total > 0 ? `${total} results for “${query}”` : `No results for “${query}”`}
             </h1>
 
 {total === 0 && (
@@ -110,3 +110,5 @@ return (
     </main>
   );
 }
+
+
