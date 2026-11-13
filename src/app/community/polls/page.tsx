@@ -1,151 +1,114 @@
 ﻿"use client";
+
 import { useEffect, useState } from "react";
-import { loadDB, saveDB, uid, isPollClosed, type Poll } from "@/lib/community-store";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function PollsPage() {
-  const [polls, setPolls] = useState<Poll[]>([]);
-  const [myVotes, setMyVotes] = useState<Record<string, string[]>>({});
-  const [clientId, setClientId] = useState("");
-  const [loaded, setLoaded] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [mode, setMode] = useState<"single" | "multi">("single");
-  const [closesAt, setClosesAt] = useState("");
-  const [opts, setOpts] = useState(["", "", ""]);
-  const [multiSel, setMultiSel] = useState<Record<string, string[]>>({});
+  const [polls, setPolls] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [msg, setMsg] = useState("");
+  const [form, setForm] = useState({ question: "", opt1: "", opt2: "", opt3: "", opt4: "" });
+
+async function load() {
+    const { data } = await supabase.from("community_polls").select("*").order("created_at", { ascending: false }).limit(20);
+    const withOpts: any[] = [];
+    for (const p of data || []) {
+      const { data: opts } = await supabase.from("community_poll_options").select("*").eq("poll_id", p.id).order("sort_no");
+      const { data: votes } = await supabase.from("community_poll_votes").select("option_id, user_id").eq("poll_id", p.id);
+      withOpts.push({ ...p, options: opts || [], votes: votes || [] });
+    }
+    setPolls(withOpts);
+  }
 
 useEffect(() => {
-    const db = loadDB();
-    setPolls(db.polls);
-    setMyVotes(db.myVotes);
-    setClientId(db.clientId);
-    setLoaded(true);
+    (async () => {
+      const { data: { user: u } } = await supabase.auth.getUser();
+      setUser(u);
+      load();
+    })();
   }, []);
 
-function persist(next: Poll[], votes: Record<string, string[]>) {
-    setPolls(next);
-    setMyVotes(votes);
-    const db = loadDB();
-    db.polls = next;
-    db.myVotes = votes;
-    saveDB(db);
+async function vote(pollId: string, optionId: string) {
+    if (!user) { setMsg("Vote karne ke liye login kijiye."); return; }
+    const { error } = await supabase.from("community_poll_votes").insert({ poll_id: pollId, option_id: optionId, user_id: user.id });
+    if (error) {
+      if (error.code === "23505") { setMsg("Aap is poll mein pehle hi vote kar chuke hain."); }
+      else { setMsg("Vote nahi hua: " + error.message); }
+      return;
+    }
+    setMsg("Vote record ho gaya ✅");
+    load();
   }
 
-function voteSingle(pid: string, oid: string) {
-    const p = polls.find((x) => x.id === pid);
-    if (!p || isPollClosed(p) || (myVotes[pid] || []).length > 0) return;
-    const next = polls.map((x) => (x.id === pid ? { ...x, options: x.options.map((o) => (o.id === oid ? { ...o, votes: o.votes + 1 } : o)) } : x));
-    persist(next, { ...myVotes, [pid]: [oid] });
+async function createPoll(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) { setMsg("Poll banane ke liye login kijiye."); return; }
+    if (form.question.trim().length < 5 || !form.opt1.trim() || !form.opt2.trim()) {
+      setMsg("Question aur kam se kam 2 options zaroori hain."); return;
+    }
+    const { data: p, error } = await supabase.from("community_polls").insert({ question: form.question.trim(), created_by: user.id }).select().single();
+    if (error) { setMsg("Poll nahi bana: " + error.message); return; }
+    const opts = [form.opt1, form.opt2, form.opt3, form.opt4].filter((o) => o.trim()).map((label, i) => ({ poll_id: p.id, label: label.trim(), sort_no: i }));
+    await supabase.from("community_poll_options").insert(opts);
+    setForm({ question: "", opt1: "", opt2: "", opt3: "", opt4: "" });
+    setMsg("Poll live ho gaya ✅");
+    load();
   }
 
-function submitMulti(pid: string) {
-    const sel = multiSel[pid] || [];
-    if (sel.length === 0) return;
-    const next = polls.map((x) =>
-      x.id === pid ? { ...x, options: x.options.map((o) => (sel.includes(o.id) ? { ...o, votes: o.votes + 1 } : o)) } : x
-    );
-    persist(next, { ...myVotes, [pid]: sel });
-  }
-
-function toggleMulti(pid: string, oid: string) {
-    const sel = multiSel[pid] || [];
-    const nextSel = sel.includes(oid) ? sel.filter((x) => x !== oid) : [...sel, oid];
-    setMultiSel({ ...multiSel, [pid]: nextSel });
-  }
-
-function closePoll(pid: string) {
-    const next = polls.map((x) => (x.id === pid ? { ...x, closedByCreator: true } : x));
-    persist(next, myVotes);
-  }
-
-function createPoll() {
-    const labels = opts.map((o) => o.trim()).filter(Boolean);
-    if (!question.trim() || labels.length < 2) return;
-    const p: Poll = {
-      id: uid(), question: question.trim(), mode, closesAt, closedByCreator: false,
-      createdBy: clientId, at: new Date().toISOString(),
-      options: labels.map((l) => ({ id: uid(), label: l, votes: 0 })),
-    };
-    persist([p, ...polls], myVotes);
-    setQuestion(""); setOpts(["", "", ""]); setMode("single"); setClosesAt("");
-  }
+const inputCls = "border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-steel-blue w-full";
 
 return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold text-steel-navy">Weekly Polls</h1>
-      <p className="mt-3 text-sm text-steel-charcoal/80 leading-relaxed">
-        Market sentiment polls with real counts. Polls are sentiment indicators, not verified
-        market prices or representative surveys. Demo mode until accounts go live.
-      </p>
+    <main className="min-h-screen bg-[#F5F7FB]">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <Link href="/community" className="text-sm font-bold text-slate-500 hover:text-steel-blue">← Community Hub</Link>
+        <h1 className="mt-2 text-3xl font-extrabold text-[#0B1B2B]">Market Sentiment Polls</h1>
+        <p className="mt-2 text-sm text-slate-500">Sentiment indicators hain — verified market price ya survey nahi.</p>
 
-<div className="mt-8 bg-white border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-sm font-bold text-steel-navy">Create a poll</h2>
-        <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Poll question" className="mt-4 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-steel-blue" />
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <select value={mode} onChange={(e) => setMode(e.target.value as "single" | "multi")} className="border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-steel-blue">
-            <option value="single">Single choice (one vote per user)</option>
-            <option value="multi">Multiple choice</option>
-          </select>
-          <input value={closesAt} onChange={(e) => setClosesAt(e.target.value)} type="datetime-local" title="Poll closing time (optional)" className="border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-steel-blue" />
-        </div>
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {opts.map((o, i) => (
-            <input key={i} value={o} onChange={(e) => setOpts(opts.map((x, j) => (j === i ? e.target.value : x)))} placeholder={"Option " + (i + 1)} className="border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-steel-blue" />
-          ))}
-        </div>
-        <button onClick={createPoll} className="mt-3 bg-steel-blue hover:bg-steel-blue/85 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all">Publish poll</button>
-      </div>
+{msg && <p className="mt-4 bg-white rounded-xl shadow px-4 py-3 text-sm font-semibold text-steel-blue">{msg}</p>}
 
-<div className="mt-8 space-y-5">
-        {loaded && polls.length === 0 && <p className="text-sm text-steel-grey">No polls yet. Create the first one above.</p>}
-        {polls.map((p) => {
-          const total = p.options.reduce((n, o) => n + o.votes, 0);
-          const closed = isPollClosed(p);
-          const voted = (myVotes[p.id] || []).length > 0;
-          const mine = p.createdBy === clientId;
-          return (
-            <div key={p.id} className="bg-white border border-gray-200 rounded-3xl p-7">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-base font-bold text-steel-navy">{p.question}</h3>
-                {closed && <span className="shrink-0 text-[11px] font-semibold text-red-500 border border-red-200 bg-red-50 px-2.5 py-1 rounded-full">Closed</span>}
+<div className="mt-6 space-y-4">
+          {polls.length === 0 && <p className="bg-white rounded-2xl shadow p-6 text-sm text-slate-400">Abhi koi poll nahi. Neeche se pehla poll banaiye.</p>}
+          {polls.map((p) => {
+            const total = p.votes.length;
+            const myVote = user ? p.votes.find((v: any) => v.user_id === user.id) : null;
+            return (
+              <div key={p.id} className="bg-white rounded-2xl shadow p-5">
+                <h3 className="font-bold text-[#0B1B2B]">{p.question}</h3>
+                <p className="text-xs text-slate-400 mt-1">{total} vote{total === 1 ? "" : "s"} · {new Date(p.created_at).toLocaleDateString("en-IN")}</p>
+                <div className="mt-3 space-y-2">
+                  {p.options.map((o: any) => {
+                    const count = p.votes.filter((v: any) => v.option_id === o.id).length;
+                    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                    return (
+                      <button key={o.id} onClick={() => vote(p.id, o.id)} disabled={!!myVote}
+                        className="w-full text-left border border-slate-200 rounded-xl px-4 py-2.5 hover:border-steel-blue disabled:hover:border-slate-200 transition-colors">
+                        <div className="flex justify-between text-sm">
+                          <span className="font-semibold text-slate-700">{o.label} {myVote?.option_id === o.id ? "✓" : ""}</span>
+                          <span className="text-slate-500">{myVote ? pct + "% (" + count + ")" : "Vote →"}</span>
+                        </div>
+                        {myVote && <div className="mt-1.5 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-steel-blue rounded-full" style={{ width: pct + "%" }}></div></div>}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <p className="mt-1 text-[11px] text-steel-grey">
-                {p.mode === "single" ? "Single choice" : "Multiple choice"}
-                {p.closesAt ? " - closes " + new Date(p.closesAt).toLocaleString() : ""}
-                {" - "}{total} vote{total === 1 ? "" : "s"}
-              </p>
-              <div className="mt-4 space-y-3">
-                {p.options.map((o) => {
-                  const pct = total > 0 ? Math.round((o.votes / total) * 100) : 0;
-                  const chosen = (myVotes[p.id] || []).includes(o.id);
-                  return (
-                    <div key={o.id}>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-steel-charcoal">{o.label}{chosen ? " (your vote)" : ""}</span>
-                        <span className="text-steel-grey">{o.votes} ({pct}%)</span>
-                      </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-steel-blue rounded-full transition-all" style={{ width: (voted || closed ? pct : 0) + "%" }} />
-                      </div>
-                      {!voted && !closed && (
-                        <button onClick={() => (p.mode === "single" ? voteSingle(p.id, o.id) : toggleMulti(p.id, o.id))} className={"mt-1.5 text-[11px] font-semibold " + ((multiSel[p.id] || []).includes(o.id) ? "text-steel-navy" : "text-steel-blue") + " hover:underline"}>
-                          {p.mode === "single" ? "Vote" : ((multiSel[p.id] || []).includes(o.id) ? "Selected - click to remove" : "Select")}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {!voted && !closed && p.mode === "multi" && (
-                <button onClick={() => submitMulti(p.id)} className="mt-3 bg-steel-navy hover:bg-steel-navy/85 text-white text-xs font-semibold px-4 py-2 rounded-xl">Submit votes</button>
-              )}
-              {voted && <p className="mt-3 text-[11px] text-emerald-600 font-semibold">Thanks - your vote is recorded.</p>}
-              {mine && !closed && (
-                <button onClick={() => closePoll(p.id)} className="mt-3 block text-[11px] text-red-500 hover:underline">Close this poll now</button>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+<form onSubmit={createPoll} className="mt-8 bg-white rounded-2xl shadow p-5">
+          <h2 className="font-bold text-[#0B1B2B]">Naya poll banaiye</h2>
+          <input className={inputCls + " mt-3"} placeholder="Poll question *" value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} />
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input className={inputCls} placeholder="Option 1 *" value={form.opt1} onChange={(e) => setForm({ ...form, opt1: e.target.value })} />
+            <input className={inputCls} placeholder="Option 2 *" value={form.opt2} onChange={(e) => setForm({ ...form, opt2: e.target.value })} />
+            <input className={inputCls} placeholder="Option 3 (optional)" value={form.opt3} onChange={(e) => setForm({ ...form, opt3: e.target.value })} />
+            <input className={inputCls} placeholder="Option 4 (optional)" value={form.opt4} onChange={(e) => setForm({ ...form, opt4: e.target.value })} />
+          </div>
+          <button className="mt-4 bg-steel-navy hover:bg-steel-blue text-white text-sm font-bold px-6 py-2.5 rounded-xl">Create Poll</button>
+        </form>
       </div>
-    </div>
+    </main>
   );
 }
