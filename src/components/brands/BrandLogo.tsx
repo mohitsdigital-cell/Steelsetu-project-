@@ -24,18 +24,18 @@ const FALLBACK: Record<string, { initials: string; from: string; to: string }> =
   "amns-india":     { initials: "AM", from: "#0C4A6E", to: "#0EA5E9" },
 };
 
-const BOX =
-  size === "lg" ? "w-20 h-20 rounded-2xl" :
-  size === "sm" ? "w-10 h-10 rounded-lg" :
-  "w-14 h-14 rounded-xl";
-
-const TXT =
-  size === "lg" ? "text-2xl" :
-  size === "sm" ? "text-xs" :
-  "text-lg";
-
 export default function BrandLogo({ slug, name, size = "md" }: { slug: string; name: string; size?: "sm" | "md" | "lg" }) {
   const [ext, setExt] = useState<"svg" | "png" | "webp" | "jpg" | null>("svg");
+
+  const BOX =
+    size === "lg" ? "w-20 h-20 rounded-2xl" :
+    size === "sm" ? "w-10 h-10 rounded-lg" :
+    "w-14 h-14 rounded-xl";
+
+  const TXT =
+    size === "lg" ? "text-2xl" :
+    size === "sm" ? "text-xs" :
+    "text-lg";
 
   // Real logo — public/brands/{slug}.svg / .png / .webp / .jpg (jo bhi mile)
   if (ext) {
