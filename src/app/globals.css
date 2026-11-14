@@ -154,7 +154,7 @@
 
 /* ===== ALIBABA-STYLE MARKETPLACE UI ===== */
 .ss-hero-img {
-  background-image: url("https://d3p662obnq9uz2.cloudfront.net/generated-images/27485851.webp");
+  background-image: url("https://d3p662obnq9uz2.cloudfront.net/generated-images/77481143.webp");
   background-size: cover;
   background-position: center;
 }
@@ -217,3 +217,31 @@
 @keyframes grad-move { from { background-position:0% 0; } to { background-position:200% 0; } }
 
 .mega-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#FF6A00; margin-bottom:.75rem; }
+
+/* ===== EVERGREEN TRENDING HOMEPAGE (2026) ===== */
+.ss-hero-img2 {
+  background-image: url("https://d3p662obnq9uz2.cloudfront.net/generated-images/77481143.webp");
+  background-size: cover;
+  background-position: center;
+}
+.ss-soft-section { position: relative; background: linear-gradient(180deg, #F8FAFD 0%, #F2F5FA 100%); }
+.ss-soft-card {
+  background: #fff; border: 1px solid #E7ECF4; border-radius: 1.25rem;
+  box-shadow: 0 6px 22px -12px rgba(11,27,43,.14);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.ss-soft-card:hover { transform: translateY(-5px); box-shadow: 0 22px 44px -16px rgba(11,27,43,.2); border-color: #FF6A00; }
+.ss-evergreen-h2 { font-family: Sora, Inter, sans-serif; font-weight: 800; letter-spacing: -.02em; color: #0B1B2B; }
+.ss-kicker {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .14em;
+  color: #FF6A00;
+}
+.ss-chip {
+  display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .9rem;
+  border-radius:999px; background:#F4F7FC; border:1px solid #E7ECF4;
+  font-size:.8rem; font-weight:600; color:#33475f; transition:all .18s;
+}
+.ss-chip:hover { border-color:#FF6A00; color:#FF6A00; background:#FFF7F0; }
+.ss-stat-num { font-family: Sora, Inter, sans-serif; font-weight: 800; background: linear-gradient(92deg,#1B6BFF,#00C9A7); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.ss-trust-dot { width:8px; height:8px; border-radius:999px; background:#10B981; box-shadow:0 0 0 4px rgba(16,185,129,.15); }
