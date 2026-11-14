@@ -94,6 +94,7 @@ export default function Hero2026() {
               </Link>
             </div>
             <div className="ss-card flex-1 min-w-[220px] p-5">
+              < mein className="hidden" />
               <p className="text-xs font-bold text-[#1B6BFF] uppercase tracking-wide">GST Tool</p>
               <h3 className="mt-1 text-lg font-extrabold text-[#0B1B2B]">Bill Maker</h3>
               <p className="mt-1 text-xs text-slate-500 leading-relaxed">
